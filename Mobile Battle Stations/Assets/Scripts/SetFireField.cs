@@ -70,7 +70,7 @@ public class SetFireField : MonoBehaviour {
                                 editVertices[x].z = 0.5f * Mathf.Min(25, Mathf.Max(1, distance_from_Start - distanceBuffer));
                                 fireArc.angle = calculateFireAngle(editVertices[x].z);
                                 fireArc.forward = direction_ShipToField;
-                                Debug.Log(calculateFireAngle(editVertices[x].z));
+                                //Debug.Log(calculateFireAngle(editVertices[x].z));
                             }
                             else
                             {
