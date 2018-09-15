@@ -5,6 +5,8 @@ using UnityEngine;
 public class MovementBehavior : MonoBehaviour {
     public static MovementBehavior selected;
     public bool isSelected = false;
+    public bool canMove = true;
+    public SetFireField fireField;
     public IEnumerator myCoroutine = null;
     public float turnVelocity = 5.0f;
     private Vector3 target;
@@ -17,6 +19,7 @@ public class MovementBehavior : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         r = GetComponent<Rigidbody>();
+        fireField = GetComponent<SetFireField>();
         if (isSelected)
         {
             selected = this;

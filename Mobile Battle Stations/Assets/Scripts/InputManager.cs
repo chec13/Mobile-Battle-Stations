@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class InputManager : MonoBehaviour {
     List<IEnumerator> allCoroutines = new List<IEnumerator>();
+  
 	// Use this for initialization
 	void Start () {
 		
@@ -11,7 +12,7 @@ public class InputManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		if (Input.GetMouseButtonDown(0))
+		if (Input.GetMouseButtonDown(0) && !Input.GetKey(KeyCode.Q) && MovementBehavior.selected.canMove)
         {
             if (MovementBehavior.selected.myCoroutine != null)
             {
@@ -31,7 +32,34 @@ public class InputManager : MonoBehaviour {
                 StartCoroutine(MovementBehavior.selected.myCoroutine);
             }
         }
+        
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            MovementBehavior.selected.canMove = false;
+            IEnumerator i = MovementBehavior.selected.fireField.MoveField();
+            StartCoroutine(i);
+            allCoroutines.Add(i);
+            MovementBehavior.selected.GetComponent<SetFireField>().fireField.GetComponent<MeshRenderer>().enabled = true;
+        }
+        if (Input.GetKeyUp(KeyCode.Q))
+        {
+            MovementBehavior.selected.canMove = true;
+            allCoroutines.Remove(MovementBehavior.selected.fireField.MoveField());
+            MovementBehavior.selected.GetComponent<SetFireField>().fireField.GetComponent<MeshRenderer>().enabled = false;
+        }
 
         //Debug.Log(allCoroutines.Count + " coroutines running");
-	}
+    }
+    public static NullableVector3 Mouse_To_Cross_YAxis()
+    {
+        Ray r = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Plane p = new Plane(Vector3.up, Vector3.zero);
+        float distance = 0;
+        if (p.Raycast(r, out distance))
+        {
+            return new NullableVector3(r.GetPoint(distance));
+        }
+        return NullableVector3.nullVector;
+    }
+    
 }
