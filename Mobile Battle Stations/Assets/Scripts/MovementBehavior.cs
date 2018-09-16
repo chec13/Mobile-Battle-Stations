@@ -45,13 +45,13 @@ public class MovementBehavior : MonoBehaviour {
             direction = (t - transform.position).normalized;
             float turnAngle = Vector3.Angle(transform.forward, direction);
             float turnSpeed = 1.0f;
-            Debug.DrawRay(transform.position, direction * 10);
+            //Debug.DrawRay(transform.position, direction * 10);
             if (turnAngle > 0.0)
             {
                 turnSpeed = Mathf.Cos(turnAngle / 2);
                 Quaternion q = transform.rotation;
                 Vector3 rotation = q.eulerAngles;
-                Debug.Log(turnAngle);
+                //Debug.Log(turnAngle);
                 exhaust.setExhaustRate(r.velocity.magnitude / maxSpeed);
                 int sign = Vector3.Cross(transform.forward, direction).y < 0 ? -1 : 1;
                

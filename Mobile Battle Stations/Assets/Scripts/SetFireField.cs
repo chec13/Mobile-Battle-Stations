@@ -7,6 +7,7 @@ public class SetFireField : MonoBehaviour {
     public GameObject fireField;
     public FireArc fireArc;
     public float maxSize;
+    public bool active_routine = false;
 	// Use this for initialization
 	void Start () {
         fireField = transform.Find("FireField").gameObject;
@@ -29,7 +30,7 @@ public class SetFireField : MonoBehaviour {
         Mesh m = fireField.GetComponent<MeshFilter>().mesh;
         yield return new WaitForFixedUpdate();
 
-        while (!Input.GetKeyUp(KeyCode.Q))
+        while (active_routine)
         {
             
             fieldPosition = fireField.transform.position;
@@ -50,6 +51,7 @@ public class SetFireField : MonoBehaviour {
                 fireField.transform.RotateAround(transform.position, Vector3.up, angle * sign);
 
             }
+            fireArc.forward = direction_ShipToField;
             if (Input.GetMouseButton(0)) // modify fire field arc
             {
                 Vector3 mouseStartPosition = Input.mousePosition;
@@ -95,14 +97,24 @@ public class SetFireField : MonoBehaviour {
     }
     public float calculateFireAngle(float outer_fireRange_distance)
     {
-        Vector3 backVector = new Vector3(0.5f * fireField.transform.localScale.x, 0f, 0.5f );
-        Vector3 frontVector = new Vector3(0.5f * fireField.transform.localScale.x, 0f, outer_fireRange_distance);
+        Vector3 backVector = new Vector3(0.5f * fireField.transform.localScale.x, 0f, 0.5f ).normalized;
+        Vector3 frontVector = new Vector3(0.5f * fireField.transform.localScale.x, 0f, outer_fireRange_distance).normalized;
+        
 
         return Vector3.Angle(backVector, frontVector);
+    }
+    public Vector3 calculateFireVector(float outer_fireRange_distance)
+    {
+        Vector3 backVector = new Vector3(0.5f * fireField.transform.localScale.x, 0f, 0.5f);
+        Vector3 frontVector = new Vector3(0.5f * fireField.transform.localScale.x, 0f, outer_fireRange_distance);
+
+        return (frontVector - backVector).normalized;
     }
     public struct FireArc
     {
         public Vector3 forward;
         public float angle;
+        
+        
     }
 }
