@@ -39,7 +39,7 @@ public class SetFireField : MonoBehaviour {
             mousePosition = InputManager.Mouse_To_Cross_YAxis();
             if (mousePosition.is_Null())
             {
-                
+                Debug.Log("No Cross");
             }
             else // set fire field location around ship
             {
@@ -49,6 +49,7 @@ public class SetFireField : MonoBehaviour {
                 float angle = Vector3.Angle(direction_ShipToField, direction_ShipToMouse);
                 int sign = Vector3.Cross(direction_ShipToField, direction_ShipToMouse).y > 0 ? 1 : -1;
                 fireField.transform.RotateAround(transform.position, Vector3.up, angle * sign);
+                Debug.Log("Hello");
 
             }
             fireArc.forward = direction_ShipToField;

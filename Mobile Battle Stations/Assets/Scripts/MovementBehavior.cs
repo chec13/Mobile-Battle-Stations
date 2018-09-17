@@ -5,6 +5,7 @@ using UnityEngine;
 public class MovementBehavior : MonoBehaviour {
     public static MovementBehavior selected;
     public bool isSelected = false;
+    
     public bool canMove = true;
     public SetFireField fireField;
     public IEnumerator myCoroutine = null;
@@ -18,6 +19,7 @@ public class MovementBehavior : MonoBehaviour {
     Rigidbody r;
 	// Use this for initialization
 	void Start () {
+        GetComponent<AudioSource>();
         r = GetComponent<Rigidbody>();
         fireField = GetComponent<SetFireField>();
         if (isSelected)
@@ -45,6 +47,7 @@ public class MovementBehavior : MonoBehaviour {
             direction = (t - transform.position).normalized;
             float turnAngle = Vector3.Angle(transform.forward, direction);
             float turnSpeed = 1.0f;
+            fireField.fireArc.forward = (fireField.fireField.transform.position - transform.position).normalized;
             //Debug.DrawRay(transform.position, direction * 10);
             if (turnAngle > 0.0)
             {
@@ -98,6 +101,7 @@ public class MovementBehavior : MonoBehaviour {
             //Debug.Log("2");
             yield return new WaitForFixedUpdate();
         }
+        fireField.fireArc.forward = (fireField.fireField.transform.position - transform.position).normalized;
         r.velocity = Vector3.zero;
         exhaust.setExhaustRate(0);
         yield return null;

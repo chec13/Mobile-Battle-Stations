@@ -17,6 +17,7 @@ public class Turret : MonoBehaviour {
     public float rotationSpeed = 5.0f;
     bool isTurning = false;
     bool isFiring = false;
+    List<AudioSource> playingClips = new List<AudioSource>();
 	// Use this for initialization
 	void Start () {
         fireField = GetComponentInParent<SetFireField>();
@@ -46,7 +47,14 @@ public class Turret : MonoBehaviour {
 	// Update is called once per frame
 	void FixedUpdate () {
 
-        
+        for (int x = 0; x < playingClips.Count; x++)
+        {
+            if (!playingClips[x].isPlaying)
+            {
+                DestroyImmediate(playingClips[x].gameObject);
+                playingClips.RemoveAt(x);
+            }
+        }
         lookVector = (fireField.fireField.transform.position - transform.position);
         lookVector.y = 0;
         //Debug.Log(lookVector);
@@ -120,30 +128,40 @@ public class Turret : MonoBehaviour {
     {
         //Debug.Log("Hi");
         SetFireField.FireArc arc = fireField.fireArc;
-        arc.angle = Mathf.Deg2Rad * arc.angle;
-        float adjacent = Mathf.Cos(arc.angle + Mathf.Acos(arc.forward.z));
-        float opp = Mathf.Sin(arc.angle + Mathf.Asin(arc.forward.x));
-        Vector3 left = new Vector3(opp, 0, adjacent);
-
-        adjacent = Mathf.Cos(Mathf.Acos(arc.forward.z) - arc.angle);
-        opp = Mathf.Sin(Mathf.Asin(arc.forward.x) - arc.angle);
-        Vector3 right = new Vector3(opp, 0, adjacent);
-        Ray r = new Ray(fireField.transform.position, left);
-        Ray r1 = new Ray(fireField.transform.position, right);
-        Vector3 leftPointInRange = r.GetPoint(Fire_Range);
-        Vector3 rightPointInRange = r1.GetPoint(Fire_Range);
-
-        float distance_Between_Vectors = Vector3.Distance(leftPointInRange, rightPointInRange);
-        Vector3 directionBetween_Left_Right_vectors = (leftPointInRange + rightPointInRange).normalized;
-        Ray between = new Ray(leftPointInRange, directionBetween_Left_Right_vectors);
-        Vector3 firePoint = between.GetPoint(Random.Range(0,distance_Between_Vectors));
-
-        //Debug.DrawLine(rightPointInRange, transform.position, Color.red, 2);
-        Debug.DrawLine(leftPointInRange, rightPointInRange, Color.blue, 2);
-        Debug.Log(leftPointInRange + "Location" + rightPointInRange);
+        Ray r = new Ray(fireField.transform.position, arc.forward);
+        Vector3 target = r.GetPoint(Fire_Range);
         GameObject shot = getShotFromPool();
+
         shot.transform.position = fireLocation.transform.position;
-        shot.transform.LookAt(firePoint);
+        shot.transform.LookAt(target);
+        shot.transform.Rotate(Vector3.up, Random.Range(-arc.angle, arc.angle));
         shot.SetActive(true);
+        playingClips.Add(Instantiate(PrefabManager.manager.turretFire_Sound, transform.position, Quaternion.identity));
+        
+        //arc.angle = Mathf.Deg2Rad * arc.angle;
+        //float adjacent = Mathf.Cos(arc.angle + Mathf.Acos(arc.forward.z));
+        //float opp = Mathf.Sin(arc.angle + Mathf.Asin(arc.forward.x));
+        //Vector3 left = new Vector3(opp, 0, adjacent);
+
+        //adjacent = Mathf.Cos(Mathf.Acos(arc.forward.z) - arc.angle);
+        //opp = Mathf.Sin(Mathf.Asin(arc.forward.x) - arc.angle);
+        //Vector3 right = new Vector3(opp, 0, adjacent);
+        //Ray r = new Ray(fireField.transform.position, left);
+        //Ray r1 = new Ray(fireField.transform.position, right);
+        //Vector3 leftPointInRange = r.GetPoint(Fire_Range);
+        //Vector3 rightPointInRange = r1.GetPoint(Fire_Range);
+
+        //float distance_Between_Vectors = Vector3.Distance(leftPointInRange, rightPointInRange);
+        //Vector3 directionBetween_Left_Right_vectors = (leftPointInRange + rightPointInRange).normalized;
+        //Ray between = new Ray(leftPointInRange, directionBetween_Left_Right_vectors);
+        //Vector3 firePoint = between.GetPoint(Random.Range(0,distance_Between_Vectors));
+
+        ////Debug.DrawLine(rightPointInRange, transform.position, Color.red, 2);
+        //Debug.DrawLine(leftPointInRange, rightPointInRange, Color.blue, 2);
+        //Debug.Log(leftPointInRange + "Location" + rightPointInRange);
+        //GameObject shot = getShotFromPool();
+        //shot.transform.position = fireLocation.transform.position;
+        //shot.transform.LookAt(firePoint);
+        //shot.SetActive(true);
     }
 }

@@ -36,6 +36,7 @@ public class InputManager : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Q))
         {
             MovementBehavior.selected.canMove = false;
+            MovementBehavior.selected.fireField.active_routine = true;
             IEnumerator i = MovementBehavior.selected.fireField.MoveField();
             StartCoroutine(i);
             allCoroutines.Add(i);
@@ -44,6 +45,8 @@ public class InputManager : MonoBehaviour {
         if (Input.GetKeyUp(KeyCode.Q))
         {
             MovementBehavior.selected.canMove = true;
+            MovementBehavior.selected.fireField.active_routine = false;
+            StopCoroutine(MovementBehavior.selected.fireField.MoveField());
             allCoroutines.Remove(MovementBehavior.selected.fireField.MoveField());
             MovementBehavior.selected.GetComponent<SetFireField>().fireField.GetComponent<MeshRenderer>().enabled = false;
         }
